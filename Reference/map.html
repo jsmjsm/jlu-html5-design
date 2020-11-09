@@ -4,20 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>地图标记</title>
 </head>
 
 <body>
     <!-- Map -->
     <div class="network-map">
         <!-- location list -->
-        <ul class="location-list">
+        <ul id="locationList">
             <li style="top: 45%; left:85%;">
                 <span class="label-bottom-right">Osaka</span>
             </li>
         </ul>
 
-        <img src="https://raw.githubusercontent.com/jsmjsm/jlu-html5-design/main/Reference/map-dark.svg" alt="地图背景">
+        <img src="./map-dark.svg" alt="地图背景">
         <!-- Style -->
         <style>
             /* Network Map Style*/
@@ -140,6 +140,18 @@
             }
         </style>
     </div>
+    <div>
+        <form id="form">
+            城市名称: <input id="locationName" type="text" name="locationName" value=""><br> 城市相对顶部: <input id="topValue" type="text" name="top" value=""><br> 城市相对左边: <input id="leftValue" type="text" name="left" value=""><br> 标签样式: <input id="labelNavigate"
+                type="text" name="labelStyle" value=""><br>
+        </form>
+    </div>
+
+    <p id="demo">单击按钮将项目添加到列表中</p>
+    <button onclick="addNode()">添加定位</button>
+    <script src="addNode.js">
+    </script>
+
 </body>
 
 </html>
