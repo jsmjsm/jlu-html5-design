@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
     <title>地图标记</title>
-    <link rel="stylesheet" href="../bootstrap-3.3.7/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -17,11 +17,11 @@
             </div>
             <div class="panel-body form-inline">
                 <label for="">
-                longitude:
+                latitude:
                 <input type="text" class="form-control" v-model="longitude">
             </label>
                 <label for="">
-                latitude:
+                longitude:
                 <input type="text" class="form-control" v-model="altitude" @keyup.f2="add">
             </label>
                 <label for="">
@@ -45,13 +45,12 @@
                 </div>
             </form>
             <button onclick="addNode()">生成</button>
-
         </div>
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>longitude</th>
                     <th>latitude</th>
+                    <th>longitude</th>
                     <th>city</th>
                     <th>operation</th>
                 </tr>
@@ -317,6 +316,7 @@
     </script>
     <script src="addNode.js">
     </script>
+    <script src="copyHtml.js"></script>
     <script>
     </script>
 </body>

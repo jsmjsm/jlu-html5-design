@@ -17,3 +17,4 @@
 - html, css, javascript，地图标记通过css来保证所标记的点偏移
 - Github 合作、项目管理
 ## 效果展示
+![demo](demo.png)
