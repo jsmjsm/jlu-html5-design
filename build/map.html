@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <title>地图标记</title>
+	<link rel="stylesheet" href="../bootstrap-3.3.7/dist/css/bootstrap.css">
+</head>
+
+<body>
+	<div id="app">
+    <div class=" panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title" v-fontweight="900" v-fontsize="50">地图标注</h3>
+        </div>
+        <div class="panel-body form-inline">
+            <label for="">
+                longitude:
+                <input type="text" class="form-control" v-model="longitude">
+            </label>
+            <label for="">
+                latitude:
+                <input type="text" class="form-control" v-model="altitude" @keyup.f2="add">
+            </label>
+            <label for="">
+                city:
+                <input type="text" class="form-control" v-model="city" @keyup.enter="add">
+            </label>
+            <input type="button" class="btn btn-primary" value="添加" @click="add">
+        </div>
+        <div class="panel-body form-inline">
+            <label for="">
+                The keyword of city name:
+                <input type="text" class="form-control" placeholder="Enter the keywords" v-model="word" v-focus v-color="'blue'">
+            </label>
+            <input type="button" class="btn btn-primary" value="查找" @click="find">
+        </div>
+		<form id="form" name="1" action="map.html" method="post">
+			<div v-for="item in search(keywords)" :key="item.city">
+				<input style = "display:none" name="city" v-model="item.city"/>
+				<input style = "display:none" v-model="item.longitude"/>
+				<input style = "display:none" v-model="item.altitude"/>
+			</div>		
+		</form>
+		<button onclick="addNode()">生成</button>	
+		
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>longitude</th>
+            <th>latitude</th>
+            <th>city</th>
+            <th>operation</th>
+        </tr>
+        </thead>
+        <tbody>
+			<tr v-for="item in search(keywords)" :key="item.city">
+				<td>{{item.longitude}}</td>
+				<td>{{item.altitude}}</td>
+				<td>{{item.city}}</td>
+				<td><a href="" @click.prevent="del(item.city)">delete</a></td>
+			</tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    //自定义指令
+    Vue.directive("focus",{
+        bind:function (el) {
+        },
+        inserted:function (el) {
+            el.focus()
+        },
+        updated:function (el) {
+        }
+    })
+    Vue.directive("color",{
+        bind:function (el,binding) {
+            el.style.color = binding.value
+        }
+    })
+    // 按键修饰符，自定义
+    Vue.config.keyCodes.f2 = 113
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            longitude:'',
+            altitude:'',
+            city:'',
+            word:'',
+            keywords:'',
+			point:'',
+            list:[
+                {longitude:'N55.5',altitude:'E37.4' ,city:'莫斯科'},
+                {longitude:'N52.3',altitude:'E13.3' ,city:'柏林'},
+                {longitude:'N51.3' ,altitude:'E0.1' ,city:'伦敦'},
+                //{longitude:'N48.5' ,altitude:'E2.2' ,city:'巴黎'},
+                {longitude:'N39.6' ,altitude:'E116.2' ,city:'北京'},
+                {longitude:'N38.5' ,altitude:'W77.0' ,city:'华盛顿'}
+            ]
+        },
+        methods:{
+			givePoint(){
+				for(i in this.list){
+					
+				}
+				console.log(list.join(','));
+				//window.localStorage.setItem("id",list.join(','));
+			},
+            add(){
+                this.list.push({longitude:this.longitude,altitude:this.altitude,city:this.city})
+                this.longitude = this.altitude = this.city = ''
+            },
+            find(){
+              this.keywords = this.word
+              this.word =  ''
+            },
+            del(cityname){
+                var index = this.list.findIndex((item,i)=>{
+                    if(item.city == cityname){
+                        return true;
+                    }
+                })
+                this.list.splice(index,1);
+            },
+            search(keyword){
+                return this.list.filter(item =>{
+                    if(item.city.includes(keyword)){
+						return item
+                    }
+                })
+            }
+        },
+        filters:{
+
+        },
+        directives:{
+            "fontweight":{
+               bind:function (el,binding) {
+                   el.style.fontWeight = binding.value
+               }
+            },
+            // 这个function相当于把代码写进了bind和update中
+            "fontsize":function (el,binding) {
+                el.style.fontSize = parseInt(binding.value)+'px'
+            }
+        }
+    })
+</script>
+    <!-- Map -->
+    <div class="network-map">
+        <!-- location list -->
+        <ul id="locationList">
+            <li style="top: 45%; left:85%;">
+                <span class="label-bottom-right">Osaka</span>
+            </li>
+        </ul>
+
+        <img src="./map-dark.svg" alt="地图背景">
+        <!-- Style -->
+        <style>
+            /* Network Map Style*/
+            
+            .network-map {
+                position: relative;
+            }
+            
+            .network-map ul {
+                margin: 0 !important;
+                list-style-type: none;
+            }
+            
+            .network-map ul li {
+                position: absolute;
+                z-index: 1;
+                width: 12px;
+                height: 12px;
+                margin: -6px;
+                background-color: #00a7dc;
+                border-radius: 6px;
+            }
+            
+            .network-map ul li a {
+                display: block;
+                width: 12px;
+                height: 12px;
+            }
+            
+            .network-map ul li span.label-top-left,
+            .network-map ul li span.label-top-right,
+            .network-map ul li span.label-bottom-left,
+            .network-map ul li span.label-bottom-right {
+                position: absolute;
+                color: #fff;
+                padding: 4px 8px;
+                margin-top: -8px;
+                line-height: 20px;
+                font-size: 14px;
+                white-space: nowrap;
+                font-family: Montserrat, sans-serif;
+                background-color: #00a7dc;
+                border-radius: 4px;
+                transition: color 0.2s;
+            }
+            
+            .network-map ul li a:hover span.label-top-left,
+            .network-map ul li a:hover span.label-top-right,
+            .network-map ul li a:hover span.label-bottom-left,
+            .network-map ul li a:hover span.label-bottom-right {
+                color: rgba(255, 255, 255, 0.6);
+                text-decoration: none;
+            }
+            
+            .network-map ul li span.label-top-left {
+                top: -32px;
+                right: 24px;
+            }
+            
+            .network-map ul li span.label-top-right {
+                top: -32px;
+                left: 24px;
+            }
+            
+            .network-map ul li span.label-bottom-left {
+                bottom: -40px;
+                right: 24px;
+            }
+            
+            .network-map ul li span.label-bottom-right {
+                bottom: -40px;
+                left: 24px;
+            }
+            
+            .network-map ul li span.label-top-left::before,
+            .network-map ul li span.label-top-right::before,
+            .network-map ul li span.label-bottom-left::before,
+            .network-map ul li span.label-bottom-right::before {
+                content: "";
+                position: absolute;
+                width: 24px;
+                height: 1px;
+                background-color: #00a7dc;
+            }
+            
+            .network-map ul li span.label-top-left::before,
+            .network-map ul li span.label-bottom-right::before {
+                transform: rotate(45deg);
+            }
+            
+            .network-map ul li span.label-top-right::before,
+            .network-map ul li span.label-bottom-left::before {
+                transform: rotate(-45deg);
+            }
+            
+            .network-map ul li span.label-top-left::before {
+                top: 34px;
+                right: -18px;
+            }
+            
+            .network-map ul li span.label-top-right::before {
+                top: 34px;
+                left: -18px;
+            }
+            
+            .network-map ul li span.label-bottom-left::before {
+                top: -6px;
+                right: -18px;
+            }
+            
+            .network-map ul li span.label-bottom-right::before {
+                top: -6px;
+                left: -18px;
+            }
+            
+            .network-map img {
+                display: block;
+                width: 100%;
+                opacity: 0.1;
+            }
+        </style>
+    </div>
+    <div>
+    </div>
+	<script>
+		var vm = new Vue({
+			el:'#app1',
+			data:{
+				list:[]
+			},
+			methods:{
+				create(){
+					this.list.push(window.localStorage.getItem("id").split(','));
+				}
+			}
+		})
+	</script>
+    <script src="addNode.js">
+    </script>
+	<script>
+	</script>
+</body>
+
+</html>
